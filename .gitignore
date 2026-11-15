@@ -1,0 +1,40 @@
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials*.json
+service_account*.json
+google-creds*.json
+*-creds.json
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Runtime data (daily dumps, logs) — not committed...
+data/*
+!data/.gitkeep
+# ...except the caches CI needs between runs (no secrets inside):
+# per-site run health and the last known state of every offer.
+!data/site_status.json
+!data/offers_latest.json
+*.log
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local tool output (knowledge graph)
+graphify-out/
+
+# Phase 0 probe output
+probe_*.json
