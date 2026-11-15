@@ -86,6 +86,7 @@ operators:
       offer: "https://www.spingenie.com/promotions/slots-welcome-bonus/"
       terms: "https://www.spingenie.com/bonus-policy/"
       free_spins: "https://www.spingenie.com/promotions/free-spins/"
+      year: "https://www.spingenie.com/promotions/free-spins-for-a-year/"
       home: "https://www.spingenie.com/"
 
   - id: midnite
@@ -158,14 +159,20 @@ operators:
 
   # ---- Crypto reserves: registry check pending ------------------------------
   - {id: wildio, operator: Wild.io, market: crypto, license: "Curaçao (to verify)", parser: wildio, enabled: false,
-     disabled_reason: "reserve: licence not yet matched to CGA register",
+     disabled_reason: "Anjouan licence ALSI-202504044 (Stack Gaming Ltd.) — not in the CGA register",
      pages: {offer: "https://wild.io/", promotions: "https://wild.io/promotions", terms: "https://wild.io/terms"}}
   - {id: betsio, operator: Bets.io, market: crypto, license: "Curaçao (to verify)", parser: betsio, enabled: false,
-     disabled_reason: "reserve: licence not yet matched to CGA register",
+     disabled_reason: "no licence text in the HTML served to the runner — cannot be matched to the register",
      pages: {offer: "https://www.bets.io/", promotions: "https://www.bets.io/promotions", terms: "https://www.bets.io/terms"}}
   - {id: winzio, operator: Winz.io, market: crypto, license: "Curaçao (to verify)", parser: winzio, enabled: false,
-     disabled_reason: "reserve: licence not yet matched to CGA register",
+     disabled_reason: "Anjouan licence ALSI-202508056 — not in the CGA register",
      pages: {offer: "https://winz.io/", promotions: "https://winz.io/promotions", terms: "https://winz.io/terms"}}
-  - {id: katsubet, operator: KatsuBet, market: crypto, license: "Curaçao (to verify)", parser: katsubet, enabled: false,
-     disabled_reason: "reserve: licence not yet matched to CGA register",
-     pages: {offer: "https://www.katsubet.com/", promotions: "https://www.katsubet.com/bonuses", terms: "https://www.katsubet.com/bonus-terms"}}
+  - id: katsubet
+    operator: KatsuBet
+    market: crypto
+    license: "Curaçao CGA OGL/2023/147/0081 (Kika Technology B.V., 164980)"
+    parser: katsubet
+    enabled: true
+    # Home and /bonuses are JS shells; /bonus-terms serves the first-deposit landing block as HTML.
+    pages:
+      terms: "https://www.katsubet.com/bonus-terms"

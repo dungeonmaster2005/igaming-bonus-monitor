@@ -1,14 +1,15 @@
-"""Offer record and the metrics derived from it.
+"""Offer and Issue records, and the metrics derived from an offer.
 
-One row per reward. When an operator lets the player choose between rewards (e.g.
+One Offer row per reward. When an operator lets the player choose between rewards (e.g.
 free spins OR free bets), each choice is its own Offer with a shared `offer_id`.
-A field that could not be parsed stays None — parsers never guess.
+A field that could not be read unambiguously stays None — parsers never guess.
+Every filled field keeps the official page it was read from and the verbatim quote.
 """
 
 from __future__ import annotations
 
 import hashlib
-from dataclasses import asdict, dataclass, field, fields
+from dataclasses import dataclass, field, fields
 from datetime import date
 from decimal import Decimal
 
@@ -17,6 +18,42 @@ UK_WAGERING_CAP = Decimal(10)
 QUALIFYING_ACTIONS = ("deposit", "wager", "deposit+wager")
 REWARD_TYPES = ("free_spins", "bonus_cash", "free_bets", "cash")
 WAGERING_APPLIES_TO = ("bonus", "winnings", "deposit+bonus")
+ISSUE_TYPES = ("conflict", "ambiguous", "typo")
+
+# Fields filled by parsers from the terms (as opposed to identity/config fields).
+PARSED_FIELDS = (
+    "qualifying_action", "qualifying_amount", "min_deposit", "promo_code",
+    "reward_type", "currency", "bonus_percent", "max_bonus", "free_spins", "spin_value",
+    "total_reward_value", "eligible_games",
+    "wagering_multiplier", "wagering_applies_to", "max_bet", "max_win",
+    "claim_days", "use_days", "expiry_days", "offer_end_date",
+)
+
+
+@dataclass(frozen=True)
+class Quote:
+    """A verbatim phrase and the official page it appears on."""
+
+    source_url: str
+    text: str
+
+
+@dataclass
+class Issue:
+    """A fact about the terms themselves: they contradict or can be read two ways."""
+
+    date: date
+    operator_id: str
+    operator: str
+    offer_id: str
+    field: str
+    type: str          # conflict / ambiguous / typo
+    quotes: list[Quote]
+    detail: str = ""   # neutral, factual (e.g. "values found: 2, 7, 30 days")
+
+    @property
+    def source_urls(self) -> list[str]:
+        return list(dict.fromkeys(q.source_url for q in self.quotes))
 
 
 @dataclass
@@ -30,13 +67,15 @@ class Offer:
     url: str
     offer_id: str
     offer_type: str = "casino_welcome"
+    license_note: str | None = None
+    offer_label: str | None = None           # e.g. "Choice A: free spins" for alternatives
     # what the player has to do
-    qualifying_action: str | None = None   # deposit / wager / deposit+wager
+    qualifying_action: str | None = None     # deposit / wager / deposit+wager
     qualifying_amount: Decimal | None = None
     min_deposit: Decimal | None = None
     promo_code: str | None = None
     # what the player gets
-    reward_type: str | None = None          # free_spins / bonus_cash / free_bets / cash
+    reward_type: str | None = None           # free_spins / bonus_cash / free_bets / cash
     currency: str | None = None
     bonus_percent: Decimal | None = None
     max_bonus: Decimal | None = None
@@ -46,18 +85,21 @@ class Offer:
     eligible_games: str | None = None
     # restrictions
     wagering_multiplier: Decimal | None = None
-    wagering_applies_to: str | None = None  # bonus / winnings / deposit+bonus
+    wagering_applies_to: str | None = None   # bonus / winnings / deposit+bonus
     max_bet: Decimal | None = None
     max_win: Decimal | None = None
-    claim_days: Decimal | None = None       # time to qualify / claim after registration
-    use_days: Decimal | None = None         # time to use the spins / bonus once credited
-    expiry_days: Decimal | None = None      # time to complete wagering
+    claim_days: Decimal | None = None        # time to qualify / claim after registration
+    use_days: Decimal | None = None          # time to use the spins / bonus once credited
+    expiry_days: Decimal | None = None       # time to complete wagering
     offer_end_date: date | None = None
     # source
     terms_text: str = ""
     terms_hash: str = ""
-    # which phrase of the terms each field was read from (for review, not stored in sheets)
-    evidence: dict[str, str] = field(default_factory=dict, repr=False)
+    evidence: dict[str, Quote] = field(default_factory=dict, repr=False)
+    # fields the terms explicitly say do not apply ("no cap on winnings", "no code needed")
+    stated_none: dict[str, Quote] = field(default_factory=dict, repr=False)
+    # why a field is empty when that is not an issue (e.g. a conditional limit)
+    field_notes: dict[str, str] = field(default_factory=dict, repr=False)
 
     def __post_init__(self) -> None:
         if self.terms_text and not self.terms_hash:
@@ -96,12 +138,34 @@ class Offer:
             return None
         return self.wagering_multiplier > UK_WAGERING_CAP
 
+    def derive_totals(self) -> None:
+        """Fill total_reward_value from its parts when the parser did not set it."""
+        if self.total_reward_value is not None:
+            return
+        spins_value = None
+        if self.free_spins is not None and self.spin_value is not None:
+            spins_value = self.free_spins * self.spin_value
+        if self.reward_type == "free_spins":
+            self.total_reward_value = spins_value
+        elif self.reward_type in ("bonus_cash", "cash", "free_bets") and self.max_bonus is not None:
+            if self.free_spins is None:
+                self.total_reward_value = self.max_bonus
+            elif spins_value is not None:  # bonus + spins package; unknown if the spins have no value
+                self.total_reward_value = self.max_bonus + spins_value
+
     def as_row(self) -> dict[str, object]:
         """All stored fields plus the derived metrics, without the evidence."""
-        row = {f.name: getattr(self, f.name) for f in fields(self) if f.name != "evidence"}
+        hidden = ("evidence", "stated_none", "field_notes")
+        row = {f.name: getattr(self, f.name) for f in fields(self) if f.name not in hidden}
         row.update(reward_per_unit=self.reward_per_unit, required_turnover=self.required_turnover,
                    over_10x=self.over_10x)
         return row
+
+
+@dataclass
+class ParseResult:
+    offers: list[Offer]
+    issues: list[Issue] = field(default_factory=list)
 
 
 def normalise_terms(text: str) -> str:
@@ -111,6 +175,3 @@ def normalise_terms(text: str) -> str:
 
 def terms_hash(text: str) -> str:
     return hashlib.sha256(normalise_terms(text).encode("utf-8")).hexdigest()
-
-
-__all__ = ["Offer", "normalise_terms", "terms_hash", "asdict"]
