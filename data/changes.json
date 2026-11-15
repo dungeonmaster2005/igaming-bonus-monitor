@@ -1,1 +1,45 @@
-[]
+[
+ {
+  "date": "2026-11-15",
+  "operator_id": "mbit",
+  "operator": "mBit Casino",
+  "row": "mbit:welcome-package#Deposit 1 of 3",
+  "offer": "Deposit 1 of 3",
+  "field": "terms_text",
+  "was": "47b4a7d77c9d",
+  "now": "404f3ea2b9a2",
+  "source_url": "https://www.mbitcasino.io/promotions/crypto-welcome-bonus",
+  "currency": "BTC",
+  "fragments": [
+   {
+    "removed": "EUR",
+    "added": "USDT",
+    "before": "Spins Up to 1 BTC 30",
+    "after": "(or crypto equivalent) 2nd Deposit 100%",
+    "covered": false
+   },
+   {
+    "removed": "EUR",
+    "added": "USDT",
+    "before": "Spins Up to 1.5 BTC 30",
+    "after": "(or crypto equivalent) 3rd Deposit 125%",
+    "covered": false
+   },
+   {
+    "removed": "EUR",
+    "added": "USDT",
+    "before": "Spins Up to 1.5 BTC 30",
+    "after": "(or crypto equivalent) How to Claim",
+    "covered": false
+   },
+   {
+    "removed": "EUR",
+    "added": "USDT",
+    "before": "make your first deposit of 30",
+    "after": "or crypto equivalent, and your bonus",
+    "covered": false
+   }
+  ],
+  "market": "crypto"
+ }
+]
