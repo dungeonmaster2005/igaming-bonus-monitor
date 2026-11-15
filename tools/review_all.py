@@ -15,10 +15,7 @@ from src.config import load_operators
 from src.models import PARSED_FIELDS
 from src.operators import PARSERS
 
-NOT_APPLICABLE = {
-    "free_spins": {"bonus_percent", "max_bonus"},
-    "free_bets": {"free_spins", "spin_value", "wagering_multiplier", "wagering_applies_to", "max_win", "max_bet"},
-}
+from src.tables import NOT_APPLICABLE  # noqa: E402  (one definition for sheet and review)
 
 
 def load(pages_dir: Path, op: dict) -> dict[str, str]:

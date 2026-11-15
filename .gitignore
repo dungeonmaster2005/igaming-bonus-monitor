@@ -25,6 +25,7 @@ data/*
 # per-site run health and the last known state of every offer.
 !data/site_status.json
 !data/offers_latest.json
+!data/changes.json
 *.log
 
 # OS / editors

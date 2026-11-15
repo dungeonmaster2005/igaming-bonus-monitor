@@ -127,3 +127,30 @@ trigger Telegram alerts. Runs on GitHub Actions. Infrastructure is adapted from
   read visible text only.
 - Gotcha: writing regexes through a bash heredoc turned `\b` into a backspace character
   three times — edit regex code with the Edit tool.
+
+### Phase 3 — Google Sheets (2026-11-15)
+- New separate spreadsheet (id in `.env` / GitHub Secret `SHEET_ID`), locale en_GB, UTC. Tabs:
+  offers_uk, offers_crypto, issues, changes, terms, status, history. Row 1 on every tab:
+  "B2B market data. 18+. Not an offer to gamble. Collected from a US IP on <date>; terms may
+  differ by location." Row 2: what the tab shows; row 3 header; data from row 4.
+- User corrections: `product` (casino / sports; Monopoly choice B = sports) — ranking and
+  comparison only within one product. Crypto main metric `turnover_x_deposit` = bonus % / 100 ×
+  wagering (with deposit+bonus wagering: (1 + bonus %/100) × wagering); `required_turnover` at the
+  maximum bonus stays as a reference column. Issue severity: conflict high, ambiguous medium, typo low.
+- offers_uk: product, then reward_per_unit desc; on equal value no-wagering first, then known
+  wagering, then unknown. Competition ranks ("1, 2, 2, 4") within the product. Wagering and its
+  base right after the metric; over_10x is a checkbox.
+- offers_crypto: turnover_x_deposit asc; days to wager and max bet next to it.
+- Empty cells: "none" (terms say there is no limit), "n/a" (does not apply), "—" (not stated),
+  "conflict" (link to the issue's first row). Every parsed value links to its source page, the
+  cell note holds the verbatim quote; a value that has an issue against it is highlighted.
+- Links are only the operators' own pages, no tracking parameters.
+- State between runs (committed by CI): data/site_status.json, data/offers_latest.json (last known
+  offers with evidence, issues with first/last seen, terms hash + last changed), data/changes.json.
+  First observation of an operator is the baseline (no change rows). A STALE operator (page
+  failed/blocked/layout changed) logs no changes; its last known rows are shown flagged.
+  Pages are never parsed partially: one failed page makes the operator stale for the day.
+- history keeps one snapshot per day (same-day rerun replaces it), newest first.
+- First fill: from the pages a GitHub runner fetched on 2026-11-15 (tests/fixtures), via
+  `python -m src.main --pages-dir tests/fixtures --date 2026-11-15`. 7Bit's legal page is not
+  fetched daily any more (`license_page`, not used by the parser).

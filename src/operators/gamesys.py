@@ -51,6 +51,7 @@ def parse(pages: dict[str, str], op: dict, today: date) -> ParseResult:
             url = terms_url if s in sports_rules else offer_url
             _read_free_bet_sentence(fb, s, url)
         bets = new_offer(op, today, offer_id, offer_url, reward_type="free_bets", offer_label="Choice B: free bets",
+                         product="sports",
                          eligible_games=None,
                          terms_text="\n\n".join([" ".join(sports_rules), " ".join(sports_text)]))
         issues += finish(bets, fb, PARSED_FIELDS)

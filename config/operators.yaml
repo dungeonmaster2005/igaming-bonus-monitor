@@ -132,7 +132,8 @@ operators:
     pages:
       offer: "https://7bitcasino.com/bonuses"
       terms: "https://7bitcasino.com/bonus-terms"
-      legal: "https://7bitcasino.com/terms-and-conditions"
+    # licence text checked against the CGA register in phase 1; not needed by the parser
+    license_page: "https://7bitcasino.com/terms-and-conditions"
 
   - id: mbit
     operator: mBit Casino

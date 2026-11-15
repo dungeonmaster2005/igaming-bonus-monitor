@@ -19,6 +19,8 @@ QUALIFYING_ACTIONS = ("deposit", "wager", "deposit+wager")
 REWARD_TYPES = ("free_spins", "bonus_cash", "free_bets", "cash")
 WAGERING_APPLIES_TO = ("bonus", "winnings", "deposit+bonus")
 ISSUE_TYPES = ("conflict", "ambiguous", "typo")
+ISSUE_SEVERITY = {"conflict": "high", "ambiguous": "medium", "typo": "low"}
+PRODUCTS = ("casino", "sports")  # rankings and comparisons stay within one product
 
 # Fields filled by parsers from the terms (as opposed to identity/config fields).
 PARSED_FIELDS = (
@@ -52,6 +54,10 @@ class Issue:
     detail: str = ""   # neutral, factual (e.g. "values found: 2, 7, 30 days")
 
     @property
+    def severity(self) -> str:
+        return ISSUE_SEVERITY[self.type]
+
+    @property
     def source_urls(self) -> list[str]:
         return list(dict.fromkeys(q.source_url for q in self.quotes))
 
@@ -67,6 +73,7 @@ class Offer:
     url: str
     offer_id: str
     offer_type: str = "casino_welcome"
+    product: str = "casino"                  # casino / sports (e.g. a free-bet alternative)
     license_note: str | None = None
     offer_label: str | None = None           # e.g. "Choice A: free spins" for alternatives
     # what the player has to do
@@ -132,6 +139,23 @@ class Offer:
         return None
 
     @property
+    def turnover_x_deposit(self) -> Decimal | None:
+        """Crypto metric: wagering needed per unit deposited (independent of deposit size).
+
+        bonus_percent / 100 × multiplier when wagering applies to the bonus; with
+        deposit+bonus the deposit itself is wagered too: (1 + bonus_percent / 100) × multiplier.
+        Unknown when wagering applies to winnings or the terms do not give the base.
+        """
+        if self.wagering_multiplier is None or self.bonus_percent is None:
+            return None
+        share = self.bonus_percent / 100
+        if self.wagering_applies_to == "bonus":
+            return share * self.wagering_multiplier
+        if self.wagering_applies_to == "deposit+bonus":
+            return (1 + share) * self.wagering_multiplier
+        return None
+
+    @property
     def over_10x(self) -> bool | None:
         """UK only: wagering above the 10x level (None when not applicable/unknown)."""
         if self.market != "UK" or self.wagering_multiplier is None:
@@ -158,7 +182,7 @@ class Offer:
         hidden = ("evidence", "stated_none", "field_notes")
         row = {f.name: getattr(self, f.name) for f in fields(self) if f.name not in hidden}
         row.update(reward_per_unit=self.reward_per_unit, required_turnover=self.required_turnover,
-                   over_10x=self.over_10x)
+                   turnover_x_deposit=self.turnover_x_deposit, over_10x=self.over_10x)
         return row
 
 
@@ -175,3 +199,64 @@ def normalise_terms(text: str) -> str:
 
 def terms_hash(text: str) -> str:
     return hashlib.sha256(normalise_terms(text).encode("utf-8")).hexdigest()
+
+
+# --- (de)serialisation for the state cache (data/offers_latest.json) ------------------
+
+def _plain(value):
+    if isinstance(value, Decimal):
+        return str(value)
+    if isinstance(value, date):
+        return value.isoformat()
+    return value
+
+
+_DECIMAL_FIELDS = {f.name for f in fields(Offer) if "Decimal" in str(f.type)}
+_DATE_FIELDS = {"date", "offer_end_date"}
+
+
+def offer_to_dict(offer: Offer) -> dict:
+    data = {f.name: _plain(getattr(offer, f.name)) for f in fields(Offer)
+            if f.name not in ("evidence", "stated_none", "field_notes")}
+    data["evidence"] = {k: [q.source_url, q.text] for k, q in offer.evidence.items()}
+    data["stated_none"] = {k: [q.source_url, q.text] for k, q in offer.stated_none.items()}
+    data["field_notes"] = dict(offer.field_notes)
+    return data
+
+
+def offer_from_dict(data: dict) -> Offer:
+    data = dict(data)
+    evidence = {k: Quote(*v) for k, v in data.pop("evidence", {}).items()}
+    stated_none = {k: Quote(*v) for k, v in data.pop("stated_none", {}).items()}
+    notes = data.pop("field_notes", {})
+    known = {f.name for f in fields(Offer)}
+    for key in list(data):
+        if key not in known:
+            data.pop(key)
+        elif data[key] is not None and key in _DECIMAL_FIELDS:
+            data[key] = Decimal(data[key])
+        elif data[key] is not None and key in _DATE_FIELDS:
+            data[key] = date.fromisoformat(data[key])
+    return Offer(**data, evidence=evidence, stated_none=stated_none, field_notes=notes)
+
+
+def issue_to_dict(issue: Issue) -> dict:
+    return {"date": issue.date.isoformat(), "operator_id": issue.operator_id, "operator": issue.operator,
+            "offer_id": issue.offer_id, "field": issue.field, "type": issue.type, "detail": issue.detail,
+            "quotes": [[q.source_url, q.text] for q in issue.quotes]}
+
+
+def issue_from_dict(data: dict) -> Issue:
+    return Issue(date=date.fromisoformat(data["date"]), operator_id=data["operator_id"], operator=data["operator"],
+                 offer_id=data["offer_id"], field=data["field"], type=data["type"], detail=data.get("detail", ""),
+                 quotes=[Quote(*q) for q in data["quotes"]])
+
+
+def row_key(offer: Offer) -> str:
+    """Stable id of one row: the offer plus its choice/step ("Choice B", "Deposit 2 of 4")."""
+    label = (offer.offer_label or "").split(":")[0].strip()
+    return f"{offer.offer_id}#{label}" if label else offer.offer_id
+
+
+def issue_id(issue: Issue) -> str:
+    return f"{issue.offer_id}/{issue.field}"
