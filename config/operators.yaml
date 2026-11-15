@@ -88,10 +88,11 @@ operators:
     market: UK
     license: "UKGC"
     parser: midnite
-    enabled: false   # phase 1 check: terms in embedded JSON
+    # The casino page's embedded JSON has no offer terms (only a meta description);
+    # the welcome offer terms are a public article in Midnite's help centre.
+    enabled: false   # phase 2
     pages:
-      offer: "https://www.midnite.com/casino/"
-      promotions: "https://help.midnite.com/en/collections/1865400-promotions"
+      offer: "https://help.midnite.com/en/articles/9018497-uk-casino-welcome-offer"
 
   - id: lottoland_uk
     operator: Lottoland
