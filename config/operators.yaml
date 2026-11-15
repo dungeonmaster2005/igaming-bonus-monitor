@@ -91,6 +91,7 @@ operators:
     enabled: false   # phase 1 check: terms in embedded JSON
     pages:
       offer: "https://www.midnite.com/casino/"
+      promotions: "https://help.midnite.com/en/collections/1865400-promotions"
 
   - id: lottoland_uk
     operator: Lottoland
@@ -106,7 +107,7 @@ operators:
   - id: bitstarz
     operator: BitStarz
     market: crypto
-    license: "Curaçao (to verify)"
+    license: "Curaçao CGA OGL/2024/165/0185 (Gareton B.V., 160656)"
     parser: bitstarz
     enabled: false
     pages:
@@ -117,7 +118,7 @@ operators:
   - id: sevenbit
     operator: 7Bit Casino
     market: crypto
-    license: "Curaçao (to verify)"
+    license: "Curaçao CGA OGL/2023/147/0081 (Kika Technology B.V., 164980)"
     parser: sevenbit
     enabled: false
     pages:
@@ -128,7 +129,7 @@ operators:
   - id: mbit
     operator: mBit Casino
     market: crypto
-    license: "Curaçao (to verify)"
+    license: "Curaçao CGA OGL/2024/1307/0748 (Scores55 Tech N.V., 162990)"
     parser: mbit
     enabled: false
     pages:
