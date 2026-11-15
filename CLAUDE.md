@@ -75,3 +75,27 @@ trigger Telegram alerts. Runs on GitHub Actions. Infrastructure is adapted from
   - Crypto reserves not examined in detail: Wild.io, Bets.io, Winz.io, KatsuBet, BetFury
     (redirects to mirror domain bf1.io).
 - Ireland, Netherlands, Ontario dropped: no operator usable from GitHub runners.
+
+### Phase 1 — data model, first parser (2026-11-15)
+- Pages for fixtures are fetched by a GitHub runner (`fetch-pages` workflow,
+  `tools/fetch_pages.py`), so parsers are built on the HTML CI actually gets.
+- Offer = one row per reward; alternative rewards share an `offer_id`.
+  `wagering_applies_to` (bonus / winnings / deposit+bonus) replaces the original
+  `wagering_base` (it is a superset). Durations: `claim_days` = time to qualify/claim,
+  `use_days` = time to use spins/bonus once credited, `expiry_days` = time to finish
+  wagering. Metrics: `reward_per_unit` (UK), `required_turnover` (crypto; empty when
+  wagering applies to winnings), `over_10x` (UK, multiplier > 10).
+- Parsing policy: every candidate value is collected with its sentence; a field is set
+  only if all candidates agree. Contradictions → empty + "conflict" note; ambiguous
+  phrasing → empty + "ambiguous" note. Example: Unibet UK gives 48 h, 7 days and 30 days
+  for using the spins, and writes the spin value as "0.10p".
+- In a free-spins offer, "bonus funds must be wagered 10x" refers to the spin winnings:
+  such sentences give the multiplier only; the base comes from sentences that name it.
+- Midnite: the casino page's embedded JSON has no offer terms (the phase 0 hit was the
+  meta description). Full terms are in the public help-centre article
+  help.midnite.com/en/articles/9018497-uk-casino-welcome-offer (fetched from CI) → in.
+- Crypto licences matched to the CGA OGL register of 2026-11-12: BitStarz (Gareton
+  B.V., 160656, OGL/2024/165/0185 — exact match), 7Bit (Kika Technology B.V.,
+  OGL/2023/147/0081; site prints reg. no. 16498, register 164980), mBit (site "Scores55
+  Tech B.V.", register "N.V.", same reg. no. 162990 and licence OGL/2024/1307/0748).
+  Cloudbet not confirmed (licence expired, "Assessment in progress") → not used.
