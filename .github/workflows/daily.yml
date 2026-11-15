@@ -1,0 +1,85 @@
+# Daily run: read every enabled operator, update the Google Sheet, send Telegram alerts,
+# commit the state the next run compares against.
+#
+# Schedule: GitHub cron runs in UTC. 07:17 UTC (not :00 — top-of-the-hour jobs queue longest).
+# In practice GitHub starts scheduled jobs on this account 7–9 hours late (see README).
+# Adapted from eu-price-monitor's daily.yml (that file is not modified).
+name: daily-bonus-monitor
+
+on:
+  schedule:
+    - cron: "17 7 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write  # the run commits data/ (state between runs)
+
+concurrency:
+  group: daily-bonus-monitor  # never two runs at once (they share data/ and the sheet)
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Tests
+        run: python -m pytest -q
+
+      - name: Run monitor
+        env:
+          GOOGLE_CREDS: ${{ secrets.GOOGLE_CREDS }}
+          SHEET_ID: ${{ secrets.SHEET_ID }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          PYTHONUNBUFFERED: "1"
+        run: |
+          set -o pipefail
+          python -m src.main 2>&1 | tee run.log
+
+      # The monitor saves data/ only after the sheet and Telegram succeeded, so a failed run
+      # leaves nothing to commit and the next run compares against the same baseline.
+      - name: Commit state
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/site_status.json data/offers_latest.json data/changes.json
+          if git diff --cached --quiet; then
+            echo "No state changes to commit"
+            exit 0
+          fi
+          git commit -m "chore(data): daily state $(date -u +%F) [skip ci]"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - name: Notify Telegram about a failed run
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          curl -sS --fail-with-body -o /dev/null \
+            --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=Casino welcome-offer monitor: the daily run failed; no data was written. Log: ${RUN_URL}" \
+            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage"
+
+      - name: Upload run log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: run-log
+          path: |
+            run.log
+            data/site_status.json
+          retention-days: 14
