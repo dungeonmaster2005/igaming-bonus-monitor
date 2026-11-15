@@ -100,8 +100,14 @@ def parse_bitstarz(pages: dict[str, str], op: dict, today: date) -> ParseResult:
         if re.search(r"activate your free spins you must access and open the game within 1 day", s):
             steps[1].note("use_days", "two windows: open the game within 1 day of crediting, then finish the "
                                       "rounds within 1 day of activation")
+    # terms text: the welcome-package blocks and the bonus terms only — the rest of these pages is a
+    # live lobby (24-hour wins ticker, rotating game carousels) that changes every hour
+    promo_block = between(promo, r"^Welcome Package$", r"^Level Up Adventure$")
+    home_block = between(home, r"^Four deposits, four bonuses", r"welcome package is just the opening act")
+    if not promo_block or not home_block:
+        raise LayoutChanged("bitstarz: welcome package block not found")
     offers, issues = _rows(op, today, "bitstarz:welcome-package", u["promotions"], steps, shared,
-                           "\n\n".join([" ".join(promo), " ".join(home), " ".join(terms)]))
+                           "\n\n".join([" ".join(promo_block), " ".join(home_block), " ".join(terms)]))
     return ParseResult(offers, issues)
 
 

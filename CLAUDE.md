@@ -154,3 +154,31 @@ trigger Telegram alerts. Runs on GitHub Actions. Infrastructure is adapted from
 - First fill: from the pages a GitHub runner fetched on 2026-11-15 (tests/fixtures), via
   `python -m src.main --pages-dir tests/fixtures --date 2026-11-15`. 7Bit's legal page is not
   fetched daily any more (`license_page`, not used by the parser).
+
+### Phase 4 — Telegram alerts (2026-11-15)
+- Licences verified in the UKGC register (2026-11-15): Spin Genie → Skill On Net Limited, account
+  39326 (licence active, www.spingenie.com listed; the site's FAQ links to this entry); Midnite →
+  Midnite Limited, account 101839 (active from 2026-08-11, www.midnite.com listed; number from the
+  midnite.com footer). Turnover formula for deposit+bonus wagering: (1 + bonus %/100) × wagering (kept).
+- Alert groups, thresholds and limits in config/alerts.yaml: numeric_change, terms_change (short
+  diff, up to 3 passages, nearby edits merged, "+N more"), offer_appeared, offer_disappeared,
+  issue_opened, issue_closed, over_10x (UK, when it starts), offer_ending (≤ 7 days, once per row and
+  end date). 5 lines per group, then "…and N more". Caption "B2B market data. 18+. Not an offer to gamble."
+- No message on the first run (baseline), for stale operators, or when nothing changed. An
+  operator's first observation is its own baseline (no changes, no issue alerts).
+- State is saved after the sheet and Telegram: if either fails, the next run diffs against the
+  same baseline again (no lost alert).
+- Terms normalisation (src/terms_text.py) — only rules seen on monitored pages. Evidence: CI fetch
+  43732834320 (~13:00 UTC) vs the morning fetches; whitespace-only comparison showed BitStarz
+  changing within 4 hours, all others identical. Cut before hashing: lower case; "last updated
+  [on] <date>" stamps (Virgin Games, Jackpotjoy, BitStarz); copyright year (mBit "© 2026", Monopoly
+  "© 1935"); exchange-rate equivalent lists of 3+ amounts in different coins/currencies → digits as
+  # (BitStarz min deposit/max bet "1,000 NOK, 0.488 BCH, 2.231 LTC…", mBit FS max win list);
+  invisible characters (Midnite ​); typographic quotes/dashes; unicode spaces. NOT cut:
+  dates, times ("until 23:59" on Monopoly is a rule) and amounts inside the rules.
+- BitStarz terms text narrowed to the welcome-package blocks + bonus terms page: the rest of its
+  pages is a live lobby ("Biggest Wins (24 hours)" ticker, rotating game carousels, an A/B headline).
+- Hashes are recomputed from stored text with the current rules on every diff, so changing a rule
+  never reads as a terms edit. Baseline in data/ rebuilt from the 2026-11-15 fixtures after this.
+- Test: tools/alert_demo.py (artificial yesterday in a throw-away dir; Unibet 10x→20x and NetBet
+  clauses edited in the HTML, Spin Genie choice C removed); the sent test message is headed as a test.

@@ -13,7 +13,17 @@ from dataclasses import dataclass, field, fields
 from datetime import date
 from decimal import Decimal
 
-UK_WAGERING_CAP = Decimal(10)
+def _wagering_cap() -> Decimal:
+    """UK "over 10x" threshold from config/alerts.yaml (10 if the file is not there)."""
+    from pathlib import Path
+    path = Path(__file__).resolve().parent.parent / "config" / "alerts.yaml"
+    if path.exists():
+        import yaml
+        return Decimal(str(yaml.safe_load(path.read_text(encoding="utf-8")).get("over_10x_multiplier", 10)))
+    return Decimal(10)
+
+
+UK_WAGERING_CAP = _wagering_cap()
 
 QUALIFYING_ACTIONS = ("deposit", "wager", "deposit+wager")
 REWARD_TYPES = ("free_spins", "bonus_cash", "free_bets", "cash")
@@ -193,12 +203,14 @@ class ParseResult:
 
 
 def normalise_terms(text: str) -> str:
-    """Whitespace-insensitive form of the terms, so layout changes don't look like edits."""
-    return " ".join(text.split())
+    """Form of the terms that is hashed (see src/terms_text.py for what is cut)."""
+    from src.terms_text import normalise
+    return normalise(text)
 
 
 def terms_hash(text: str) -> str:
-    return hashlib.sha256(normalise_terms(text).encode("utf-8")).hexdigest()
+    from src.terms_text import terms_hash as _hash
+    return _hash(text)
 
 
 # --- (de)serialisation for the state cache (data/offers_latest.json) ------------------

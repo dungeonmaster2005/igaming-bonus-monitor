@@ -1,0 +1,35 @@
+# Telegram alerts. Groups are sent in this order; remove a group to switch it off.
+groups:
+  - numeric_change      # a numeric field changed: was → now
+  - terms_change        # the terms text changed (short diff)
+  - offer_appeared
+  - offer_disappeared
+  - issue_opened        # the operator's pages started to contradict themselves / became ambiguous
+  - issue_closed
+  - over_10x            # UK: wagering went above the threshold below
+  - offer_ending        # offer_end_date is this many days away or fewer
+
+max_lines_per_group: 5            # then "…and N more"
+offer_ending_days: 7
+over_10x_multiplier: 10           # UK wagering above this is flagged (sheet column "Over 10x" too)
+terms_diff_fragments: 3
+terms_fragment_chars: 160
+
+# Fields whose change goes to numeric_change (others are still logged on the "changes" sheet).
+numeric_fields:
+  - qualifying_amount
+  - min_deposit
+  - bonus_percent
+  - max_bonus
+  - free_spins
+  - spin_value
+  - total_reward_value
+  - wagering_multiplier
+  - max_bet
+  - max_win
+  - claim_days
+  - use_days
+  - expiry_days
+  - offer_end_date
+
+caption: "B2B market data. 18+. Not an offer to gamble."

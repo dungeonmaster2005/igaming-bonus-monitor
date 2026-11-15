@@ -79,7 +79,9 @@ operators:
   - id: spin_genie
     operator: Spin Genie
     market: UK
-    license: "UKGC"
+    # UKGC register 2026-11-15: account 39326, licence 039326-R-319358-063 active; www.spingenie.com listed.
+    # The site links to this register entry from its FAQ.
+    license: "UKGC 39326 (Skill On Net Limited)"
     parser: spin_genie
     enabled: true
     pages:
@@ -92,7 +94,10 @@ operators:
   - id: midnite
     operator: Midnite
     market: UK
-    license: "UKGC"
+    # UKGC register 2026-11-15: account 101839, licence 101839-R-342850-002 active (from 2026-08-11);
+    # www.midnite.com listed. Number taken from the midnite.com footer, confirmed in the register.
+    license: "UKGC 101839 (Midnite Limited)"
+    license_note: "Terms read from help.midnite.com (Midnite's help centre); the register lists www.midnite.com."
     parser: midnite
     # The casino page's embedded JSON has no offer terms (only a meta description);
     # the welcome offer terms are a public article in Midnite's help centre.
