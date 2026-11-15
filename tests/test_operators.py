@@ -138,3 +138,12 @@ def test_layout_change_is_an_error_not_an_empty_offer():
     op = OPS["unibet_uk"]
     with pytest.raises(LayoutChanged):
         PARSERS["unibet_uk"]({"offer": "<html><h1>Offer</h1></html>"}, op, date(2026, 11, 15))
+
+
+def test_mbit_min_deposit_note_follows_the_shown_currency():
+    """The runner saw "30 EUR" in the morning and "30 USDT" in the afternoon of 2026-11-15."""
+    op = OPS["mbit"]
+    pages = {n: (FIXTURES / f"mbit__{n}.html").read_text(encoding="utf-8").replace("30 EUR", "30 USDT")
+             for n in op["pages"]}
+    offers = PARSERS["mbit"](pages, op, date(2026, 11, 15)).offers
+    assert all(o.min_deposit is None and "USDT" in o.field_notes["min_deposit"] for o in offers)

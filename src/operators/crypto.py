@@ -215,10 +215,15 @@ def parse_mbit(pages: dict[str, str], op: dict, today: date) -> ParseResult:
             steps[heading].add("free_spins", int(m.group(3)), u["offer"], s)
         heading = None
     # The bonus table is built from <div> cells; its "Min Deposit" column holds one cell per step.
-    min_cells = [s for s in page if re.fullmatch(r"\d+ EUR(?: \(or crypto equivalent\))?", s)]
+    # The currency shown varies between fetches (EUR in the morning of 2026-11-15, USDT in the afternoon).
+    min_re = re.compile(r"([\d.]+) ([A-Z]{3,4})(?: \(or crypto equivalent\))?")
+    min_cells = [m for s in page if (m := min_re.fullmatch(s))]
     if len(min_cells) == len(steps):
-        for n, cell in zip(sorted(steps), min_cells):
-            steps[n].note("min_deposit", f"“{cell}” — not in the bonus currency (BTC)")
+        for n, m in zip(sorted(steps), min_cells):
+            if m.group(2) == "BTC":
+                _crypto(steps[n], "min_deposit", m.group(0).split(" (")[0], u["offer"], m.group(0), currency=False)
+            else:
+                steps[n].note("min_deposit", f"“{m.group(0)}” — not in the bonus currency (BTC)")
     for s in terms:
         if m := re.search(r"First Deposit Bonus and Second Deposit Bonus each have a wager requirement of (\d+)x", s):
             for n in (1, 2):

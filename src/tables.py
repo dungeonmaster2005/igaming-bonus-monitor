@@ -459,7 +459,10 @@ def history_rows(today: Today) -> list[list]:
         for name in HISTORY_FIELDS:
             v = display_value(o, name)
             values.append("" if v == MISSING else v)
-        derived = [o.reward_per_unit, o.turnover_x_deposit, o.required_turnover]
+        # each market's metric only: reward_per_unit is the UK one, the turnover metrics are crypto ones
+        uk = o.market == "UK"
+        derived = [o.reward_per_unit if uk else None, None if uk else o.turnover_x_deposit,
+                   None if uk else o.required_turnover]
         out.append([today.day, o.operator_id, o.operator, o.market, row_key(o), label(o), *values,
                     *["" if d is None else f"{d.normalize():f}" for d in derived],
                     "" if o.over_10x is None else str(o.over_10x).upper(), o.terms_hash])

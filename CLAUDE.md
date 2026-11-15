@@ -182,3 +182,22 @@ trigger Telegram alerts. Runs on GitHub Actions. Infrastructure is adapted from
   never reads as a terms edit. Baseline in data/ rebuilt from the 2026-11-15 fixtures after this.
 - Test: tools/alert_demo.py (artificial yesterday in a throw-away dir; Unibet 10x→20x and NetBet
   clauses edited in the HTML, Spin Genie choice C removed); the sent test message is headed as a test.
+
+### Phase 4b — alert format (2026-11-15)
+- One block per operator: changed fields (was → now; an identical change on every deposit step /
+  choice is one line), flags (over 10x, offer ending, new issue / issue resolved), then terms-text
+  passages that no changed field explains. A passage is explained when it differs only in numbers
+  and each number goes from a changed field's old value to its new one ("x10" → "x20" with wagering
+  10 → 20); if all passages are explained: "terms text updated accordingly". Offers listed / no
+  longer listed: one block at the end. No hashes in messages (they stay on the terms sheet).
+- Noisy source: unexplained terms-text changes on 3 consecutive days → "NOISY since … (changed on
+  …)" on the status sheet, text alerts paused, one notice in Telegram; field alerts continue.
+  Cleared (one notice) after 7 days without such a change. Thresholds in config/alerts.yaml.
+
+### Phase 5 — GitHub Actions (2026-11-15)
+- `.github/workflows/daily.yml` (adapted from eu-price-monitor): cron 07:17 UTC + manual dispatch;
+  tests, then the monitor; commits data/site_status.json, offers_latest.json, changes.json as
+  github-actions[bot] with [skip ci]; Telegram notice on failure; run log artifact (14 days).
+- State is saved only after the sheet and Telegram succeeded, so a failed run commits nothing.
+- Secrets in the repo: GOOGLE_CREDS (service-account JSON), SHEET_ID, TELEGRAM_BOT_TOKEN,
+  TELEGRAM_CHAT_ID. README states the real schedule: 07:17 UTC, actual start 7–9 hours later.
