@@ -405,22 +405,32 @@ def terms_table(today: Today, terms_state: dict[str, dict]) -> Table:
 
 STATUS_COLUMNS = [
     Column("Operator", 130), Column("Market", 70), Column("Status", 85), Column("Last run", 85),
-    Column("Last success", 90), Column("Offer rows", 75), Column("Pages read", 75), Column("Reason / note", 520),
+    Column("Last success", 90), Column("Offer rows", 75), Column("Pages read", 75), Column("Terms text", 300),
+    Column("Reason / note", 520),
 ]
 STATUS_LEGEND = ("Run health per operator. STALE = a page was blocked, geo-blocked, failed or changed layout; "
                  "nothing is worked around, the last known offers are shown and flagged. DISABLED = not monitored "
-                 "(reason given).")
+                 "(reason given). Terms text NOISY = it changed, beyond what changed fields explain, on several "
+                 "consecutive days: text alerts are paused for it, field alerts continue.")
 
 
-def status_table(statuses: dict[str, SiteStatus], disabled: list[dict]) -> Table:
+def _noise_cell(n: dict | None) -> Cell:
+    if not n or not n.get("noisy_since"):
+        return Cell("")
+    days = ", ".join(n["text_change_days"][-5:])
+    return Cell(f"NOISY since {n['noisy_since']} (changed on {days})", style="sev_medium")
+
+
+def status_table(statuses: dict[str, SiteStatus], disabled: list[dict], noise: dict[str, dict] | None = None) -> Table:
     rows = []
+    noise = noise or {}
     for s in sorted(statuses.values(), key=lambda s: (s.market != "UK", s.operator)):
         rows.append([Cell(s.operator), Cell(s.market), Cell("STALE" if s.stale else "OK"), Cell(s.last_run or ""),
                      Cell(s.last_success or ""), Cell(s.offers_today, fmt="0"),
-                     Cell(f"{s.pages_ok}/{s.pages_total}"), Cell(s.reason)])
+                     Cell(f"{s.pages_ok}/{s.pages_total}"), _noise_cell(noise.get(s.operator_id)), Cell(s.reason)])
     for op in sorted(disabled, key=lambda o: (o["market"] != "UK", o["operator"])):
         rows.append([Cell(op["operator"]), Cell(op["market"]), Cell("DISABLED"), Cell(""), Cell(""), Cell(""),
-                     Cell(""), Cell(" ".join(str(op.get("disabled_reason") or "").split()))])
+                     Cell(""), Cell(""), Cell(" ".join(str(op.get("disabled_reason") or "").split()))])
     return Table("status", STATUS_COLUMNS, rows, STATUS_LEGEND, status_column="Status")
 
 

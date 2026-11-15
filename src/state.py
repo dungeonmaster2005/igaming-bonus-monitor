@@ -18,7 +18,7 @@ from dataclasses import asdict, dataclass, field
 from datetime import date
 from pathlib import Path
 
-from src.terms_text import short_diff, terms_hash
+from src.terms_text import Passage, diff_passages, explained_by, terms_hash
 from src.models import (
     PARSED_FIELDS, Issue, Offer, issue_from_dict, issue_id, issue_to_dict, offer_from_dict, offer_to_dict, row_key,
 )
@@ -75,7 +75,7 @@ class Change:
     now: str
     source_url: str = ""
     currency: str | None = None
-    fragments: list[str] = field(default_factory=list)   # terms_text: short diff
+    fragments: list[dict] = field(default_factory=list)  # terms_text: changed passages (see terms_text.Passage)
     market: str = ""
 
 
@@ -90,8 +90,15 @@ class State:
         self.terms: dict[str, dict] = latest.get("terms", {})        # offer_id -> hash, first_seen, last_changed
         self.changes: list[dict] = self._load("changes.json", [])
         self.alerted: dict[str, dict] = latest.get("alerted", {})    # de-duplication of one-off alerts
-        self.diff_fragments = 3
-        self.fragment_chars = 160
+        self.noise: dict[str, dict] = latest.get("noise", {})        # operator_id -> text change days, noisy since
+        self.noisy_days = 3
+        self.noisy_clear_days = 7
+
+    def configure(self, config: dict) -> "State":
+        """Thresholds from config/alerts.yaml."""
+        self.noisy_days = int(config.get("noisy_after_days", self.noisy_days))
+        self.noisy_clear_days = int(config.get("noisy_clear_after_days", self.noisy_clear_days))
+        return self
 
     def _load(self, name: str, default):
         path = self.dir / name
@@ -123,6 +130,7 @@ class State:
             new_changes += run_changes
             if not baseline:
                 events.over_10x += self._over_10x(run)
+            self._track_noise(run, run_changes, today, events)
             for offer in run.offers:
                 self.offers[row_key(offer)] = {"operator_id": run.operator_id, "last_seen": day,
                                                "offer": offer_to_dict(offer)}
@@ -144,6 +152,28 @@ class State:
         self.changes = [asdict(c) for c in new_changes] + self.changes
         self._forget_old(today)
         return Today(day, rows, issues, new_changes, events)
+
+    def _track_noise(self, run: OperatorRun, changes: list[Change], today: date, events: "Events") -> None:
+        """A source is noisy when its terms text changes, beyond what changed fields explain, on
+        `noisy_days` consecutive days. Text alerts stop for it (field alerts stay); it is cleared after
+        `noisy_clear_days` days without such a change."""
+        n = self.noise.setdefault(run.operator_id, {"text_change_days": [], "noisy_since": None})
+        unexplained = any(not p["covered"] for c in changes if c.field == "terms_text" for p in c.fragments)
+        day = today.isoformat()
+        if unexplained and day not in n["text_change_days"]:
+            n["text_change_days"] = (n["text_change_days"] + [day])[-10:]
+        days = [date.fromisoformat(d) for d in n["text_change_days"]]
+        recent = days[-self.noisy_days:]
+        consecutive = len(recent) == self.noisy_days and all(
+            (b - a).days == 1 for a, b in zip(recent, recent[1:])) and recent[-1] == today
+        if consecutive and not n["noisy_since"]:
+            n["noisy_since"] = day
+            events.became_noisy.append((run.operator, [d.isoformat() for d in recent]))
+        elif n["noisy_since"] and days and (today - days[-1]).days >= self.noisy_clear_days:
+            n["noisy_since"] = None
+            events.noise_cleared.append(run.operator)
+        if n["noisy_since"]:
+            events.noisy.add(run.operator_id)
 
     def _over_10x(self, run: OperatorRun) -> list[Offer]:
         """Rows whose wagering is above the UK threshold today but was not at the last observation."""
@@ -215,7 +245,16 @@ class State:
             if old_hash != new_hash and (new.offer_id, new.terms_text) not in diffed_terms:
                 diffed_terms.add((new.offer_id, new.terms_text))
                 change(key, new, "terms_text", old_hash[:12], new_hash[:12],
-                       short_diff(old.terms_text, new.terms_text, self.diff_fragments, max_chars=self.fragment_chars))
+                       [asdict(p) for p in diff_passages(old.terms_text, new.terms_text)])
+        # a passage is "covered" when a changed field of the same offer explains it (x10 → x20, wagering 10 → 20)
+        for c in changes:
+            if c.field != "terms_text":
+                continue
+            offer_id = c.row.split("#")[0]
+            values = [(v.was, v.now) for v in changes
+                      if v.field not in ("terms_text", "offer") and v.row.split("#")[0] == offer_id]
+            for p in c.fragments:
+                p["covered"] = explained_by(Passage(**p), values)
         return changes
 
     def _update_terms(self, offers: list[Offer], day: str, changed: set[str]) -> None:
@@ -240,7 +279,8 @@ class State:
         self._write("offers_latest.json", {"offers": dict(sorted(self.offers.items())),
                                            "issues": dict(sorted(self.issues.items())),
                                            "terms": dict(sorted(self.terms.items())),
-                                           "alerted": self.alerted})
+                                           "alerted": self.alerted,
+                                           "noise": dict(sorted(self.noise.items()))})
         self._write("changes.json", self.changes)
 
     def _write(self, name: str, payload) -> None:
@@ -256,6 +296,9 @@ class Events:
     issues_opened: list[Issue] = field(default_factory=list)
     issues_closed: list[Issue] = field(default_factory=list)
     over_10x: list[Offer] = field(default_factory=list)
+    became_noisy: list[tuple[str, list[str]]] = field(default_factory=list)   # operator, change dates
+    noise_cleared: list[str] = field(default_factory=list)
+    noisy: set[str] = field(default_factory=set)                              # operator ids, text alerts off
 
 
 @dataclass

@@ -85,14 +85,30 @@ def _display_words(text: str) -> list[str]:
     return out.split()
 
 
-def short_diff(old: str, new: str, max_fragments: int = 3, context: int = 6, max_chars: int = 160) -> list[str]:
-    """Up to `max_fragments` changed passages: "…context [−removed] [+added] context…".
+@dataclass
+class Passage:
+    """One changed passage of the terms: removed and added words with a little context."""
 
-    Words are compared case-insensitively, as for the hash; the original casing is shown.
-    """
+    removed: str
+    added: str
+    before: str
+    after: str
+    covered: bool = False   # fully explained by a parsed field that changed (set by the state diff)
+
+    def render(self, max_chars: int = 160) -> str:
+        parts = []
+        if self.removed:
+            parts.append(f"[−{_clip(self.removed, max_chars // 2)}]")
+        if self.added:
+            parts.append(f"[+{_clip(self.added, max_chars // 2)}]")
+        return f"…{self.before} {' '.join(parts)} {self.after}…".replace("… ", "…").replace(" …", "…")
+
+
+def diff_passages(old: str, new: str, context: int = 6, limit: int = 30) -> list[Passage]:
+    """Changed passages, words compared case-insensitively (as for the hash); edits a few words
+    apart are merged into one passage. At most `limit` passages are kept."""
     a, b = _display_words(old), _display_words(new)
     matcher = difflib.SequenceMatcher(None, [w.lower() for w in a], [w.lower() for w in b], autojunk=False)
-    # edits a few words apart read as one passage
     spans: list[list[int]] = []
     for tag, i1, i2, j1, j2 in matcher.get_opcodes():
         if tag == "equal":
@@ -101,27 +117,45 @@ def short_diff(old: str, new: str, max_fragments: int = 3, context: int = 6, max
             spans[-1][1], spans[-1][3] = i2, j2
         else:
             spans.append([i1, i2, j1, j2])
-    fragments = []
-    for i1, i2, j1, j2 in spans:
-        if len(fragments) == max_fragments:
-            fragments.append(f"(+{len(spans) - max_fragments} more changed passage"
-                             f"{'' if len(spans) - max_fragments == 1 else 's'})")
-            break
-        before = " ".join(a[max(0, i1 - context):i1])
-        after = " ".join(a[i2:i2 + context])
-        removed, added = " ".join(a[i1:i2]), " ".join(b[j1:j2])
-        parts = []
-        if removed:
-            parts.append(f"[−{_clip(removed, max_chars // 2)}]")
-        if added:
-            parts.append(f"[+{_clip(added, max_chars // 2)}]")
-        fragments.append(f"…{before} {' '.join(parts)} {after}…".replace("… ", "…").replace(" …", "…"))
-    return fragments
+    return [Passage(" ".join(a[i1:i2]), " ".join(b[j1:j2]), " ".join(a[max(0, i1 - context):i1]),
+                    " ".join(a[i2:i2 + context])) for i1, i2, j1, j2 in spans[:limit]]
 
 
-def count_changes(old: str, new: str) -> int:
-    a, b = [w.lower() for w in _display_words(old)], [w.lower() for w in _display_words(new)]
-    return sum(1 for op in difflib.SequenceMatcher(None, a, b, autojunk=False).get_opcodes() if op[0] != "equal")
+_NUM = re.compile(r"\d[\d,]*(?:\.\d+)?")
+
+
+def explained_by(passage: Passage, value_changes: list[tuple[str, str]]) -> bool:
+    """True when the passage differs only in numbers, each going from a field's old value to its new one.
+
+    "wagered [−x10] [+x20]" with wagering 10 → 20 is explained; a reworded clause is not.
+    """
+    if not value_changes or _NUM.sub("#", passage.removed.lower()) != _NUM.sub("#", passage.added.lower()):
+        return False
+    olds, news = _NUM.findall(passage.removed), _NUM.findall(passage.added)
+    pairs = {(_as_number(w), _as_number(n)) for w, n in value_changes}
+    changed = [(o, n) for o, n in zip(olds, news) if _as_number(o) != _as_number(n)]
+    return bool(changed) and all((_as_number(o), _as_number(n)) in pairs for o, n in changed)
+
+
+def _as_number(text: str):
+    from decimal import Decimal, InvalidOperation
+    try:
+        return Decimal(text.replace(",", "")).normalize()
+    except InvalidOperation:
+        return text
+
+
+def short_diff(old: str, new: str, max_fragments: int = 3, context: int = 6, max_chars: int = 160) -> list[str]:
+    """Up to `max_fragments` rendered passages, then "(+N more changed passages)"."""
+    return render_passages(diff_passages(old, new, context), max_fragments, max_chars)
+
+
+def render_passages(passages: list[Passage], max_fragments: int = 3, max_chars: int = 160) -> list[str]:
+    out = [p.render(max_chars) for p in passages[:max_fragments]]
+    extra = len(passages) - max_fragments
+    if extra > 0:
+        out.append(f"(+{extra} more changed passage{'' if extra == 1 else 's'})")
+    return out
 
 
 def _clip(text: str, n: int) -> str:

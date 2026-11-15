@@ -72,8 +72,7 @@ def main() -> None:
     spin.offers = [o for o in spin.offers if not (o.offer_label or "").startswith("Choice C")]
 
     state = State(state_dir)
-    state.diff_fragments = int(config["terms_diff_fragments"])
-    state.fragment_chars = int(config["terms_fragment_chars"])
+    state.configure(config)
     day2 = state.apply(runs, date(2026, 11, 15))
     ending = state.offers_ending(day2, int(config["offer_ending_days"]))
     message = alerts.build_message(day2, config, ending, heading_note=TEST_NOTE)

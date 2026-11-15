@@ -86,8 +86,7 @@ def main() -> None:
 
     alert_config = load_alert_config()
     state = State(args.data_dir)
-    state.diff_fragments = int(alert_config["terms_diff_fragments"])
-    state.fragment_chars = int(alert_config["terms_fragment_chars"])
+    state.configure(alert_config)
     result = state.apply(runs, today)
     ending = [] if result.events.first_run else state.offers_ending(result, int(alert_config["offer_ending_days"]))
     log.info("%d offer rows, %d issues, %d changes", len(result.rows), len(result.issues), len(result.changes))
@@ -118,7 +117,8 @@ def write_sheets(state: State, result, enabled: list[dict], disabled: list[dict]
     sheet_tables = [
         tables.uk_table(result, issues), tables.crypto_table(result, issues), tables.issues_table(result),
         tables.changes_table(state.changes), tables.terms_table(result, state.terms),
-        tables.status_table({k: v for k, v in state.status.items() if k in enabled_ids}, disabled),
+        tables.status_table({k: v for k, v in state.status.items() if k in enabled_ids}, disabled,
+                            state.noise),
     ]
     disclaimer = tables.DISCLAIMER.format(where=COLLECTED_FROM, day=result.day)
     book = sheets.open_spreadsheet()
