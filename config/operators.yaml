@@ -14,13 +14,14 @@ operators:
     enabled: true
     pages:
       offer: "https://www.unibet.co.uk/promotions/casino-promotions/free-spins-welcome-offer?lobby=casino&promo=free-spins-welcome-offer"
+      lobby: "https://www.unibet.co.uk/casino"
 
   - id: virgin_games
     operator: Virgin Games
     market: UK
     license: "UKGC 38905 (Gamesys Operations Limited)"
     parser: gamesys
-    enabled: false   # phase 2
+    enabled: true
     pages:
       offer: "https://www.virgingames.com/uk/casino-welcome-bonus"
       terms: "https://www.virgingames.com/uk/terms"
@@ -30,7 +31,7 @@ operators:
     market: UK
     license: "UKGC 38905 (Gamesys Operations Limited)"
     parser: gamesys
-    enabled: false   # phase 2
+    enabled: true
     pages:
       offer: "https://www.jackpotjoy.com/"
       terms: "https://www.jackpotjoy.com/uk/terms"
@@ -40,7 +41,7 @@ operators:
     market: UK
     license: "UKGC 38905 (Gamesys Operations Limited)"
     parser: gamesys
-    enabled: false   # phase 2
+    enabled: true
     pages:
       offer: "https://www.monopolycasino.com/casino-welcome-bonus"
       terms: "https://www.monopolycasino.com/terms"
@@ -50,7 +51,7 @@ operators:
     market: UK
     license: "UKGC 38905 (Gamesys Operations Limited)"
     parser: gamesys
-    enabled: false   # phase 2
+    enabled: true
     pages:
       offer: "https://www.rainbowrichescasino.com/"
       terms: "https://www.rainbowrichescasino.com/uk/terms"
@@ -60,28 +61,32 @@ operators:
     market: UK
     license: "UKGC 60629 (Tek Fox Ltd)"
     parser: mrq
-    enabled: false   # phase 2
+    enabled: true
     pages:
       offer: "https://mrq.com/promotions/first-deposit-spins"
+      home: "https://mrq.com/"
 
   - id: netbet_uk
     operator: NetBet
     market: UK
     license: "UKGC 39170 (Netbet Enterprises Limited)"
     parser: netbet
-    enabled: false   # phase 2
+    enabled: true
     pages:
       offer: "https://casino.netbet.co.uk/welcome-bonus-100"
+      home: "https://casino.netbet.co.uk/"
 
   - id: spin_genie
     operator: Spin Genie
     market: UK
     license: "UKGC"
     parser: spin_genie
-    enabled: false   # phase 2
+    enabled: true
     pages:
       offer: "https://www.spingenie.com/promotions/slots-welcome-bonus/"
       terms: "https://www.spingenie.com/bonus-policy/"
+      free_spins: "https://www.spingenie.com/promotions/free-spins/"
+      home: "https://www.spingenie.com/"
 
   - id: midnite
     operator: Midnite
@@ -90,7 +95,7 @@ operators:
     parser: midnite
     # The casino page's embedded JSON has no offer terms (only a meta description);
     # the welcome offer terms are a public article in Midnite's help centre.
-    enabled: false   # phase 2
+    enabled: true
     pages:
       offer: "https://help.midnite.com/en/articles/9018497-uk-casino-welcome-offer"
 
@@ -110,18 +115,19 @@ operators:
     market: crypto
     license: "Curaçao CGA OGL/2024/165/0185 (Gareton B.V., 160656)"
     parser: bitstarz
-    enabled: false
+    enabled: true
     pages:
       offer: "https://www.bitstarz.com/"
       terms: "https://www.bitstarz.com/bonus-terms-and-conditions"
-      legal: "https://www.bitstarz.com/terms-and-conditions"
+      promotions: "https://www.bitstarz.com/promotions"
 
   - id: sevenbit
     operator: 7Bit Casino
     market: crypto
     license: "Curaçao CGA OGL/2023/147/0081 (Kika Technology B.V., 164980)"
     parser: sevenbit
-    enabled: false
+    enabled: true
+    license_note: "Site prints company registration number 16498; CGA register lists 164980 (same name and licence number)."
     pages:
       offer: "https://7bitcasino.com/bonuses"
       terms: "https://7bitcasino.com/bonus-terms"
@@ -132,7 +138,8 @@ operators:
     market: crypto
     license: "Curaçao CGA OGL/2024/1307/0748 (Scores55 Tech N.V., 162990)"
     parser: mbit
-    enabled: false
+    enabled: true
+    license_note: "Site names the licensee \"Scores55 Tech B.V.\"; CGA register lists \"Scores55 Tech N.V.\" (same registration number and licence number)."
     pages:
       offer: "https://www.mbitcasino.io/promotions/crypto-welcome-bonus"
       terms: "https://www.mbitcasino.io/terms/bonus-terms"
@@ -148,3 +155,17 @@ operators:
       OGL/2024/328/0599 expired 2026-05-23, status "Assessment in progress" — not confirmed
     pages:
       offer: "https://www.cloudbet.com/en/promotions/general/welcome-package"
+
+  # ---- Crypto reserves: registry check pending ------------------------------
+  - {id: wildio, operator: Wild.io, market: crypto, license: "Curaçao (to verify)", parser: wildio, enabled: false,
+     disabled_reason: "reserve: licence not yet matched to CGA register",
+     pages: {offer: "https://wild.io/", promotions: "https://wild.io/promotions", terms: "https://wild.io/terms"}}
+  - {id: betsio, operator: Bets.io, market: crypto, license: "Curaçao (to verify)", parser: betsio, enabled: false,
+     disabled_reason: "reserve: licence not yet matched to CGA register",
+     pages: {offer: "https://www.bets.io/", promotions: "https://www.bets.io/promotions", terms: "https://www.bets.io/terms"}}
+  - {id: winzio, operator: Winz.io, market: crypto, license: "Curaçao (to verify)", parser: winzio, enabled: false,
+     disabled_reason: "reserve: licence not yet matched to CGA register",
+     pages: {offer: "https://winz.io/", promotions: "https://winz.io/promotions", terms: "https://winz.io/terms"}}
+  - {id: katsubet, operator: KatsuBet, market: crypto, license: "Curaçao (to verify)", parser: katsubet, enabled: false,
+     disabled_reason: "reserve: licence not yet matched to CGA register",
+     pages: {offer: "https://www.katsubet.com/", promotions: "https://www.katsubet.com/bonuses", terms: "https://www.katsubet.com/bonus-terms"}}
