@@ -544,7 +544,9 @@
      ]
     },
     "stated_none": {},
-    "field_notes": {}
+    "field_notes": {
+     "min_deposit": "“30 USDT (or crypto equivalent)” — not in the bonus currency (BTC)"
+    }
    }
   },
   "mbit:welcome-package#Deposit 2 of 3": {
@@ -631,7 +633,9 @@
      ]
     },
     "stated_none": {},
-    "field_notes": {}
+    "field_notes": {
+     "min_deposit": "“30 USDT (or crypto equivalent)” — not in the bonus currency (BTC)"
+    }
    }
   },
   "mbit:welcome-package#Deposit 3 of 3": {
@@ -718,7 +722,9 @@
      ]
     },
     "stated_none": {},
-    "field_notes": {}
+    "field_notes": {
+     "min_deposit": "“30 USDT” — not in the bonus currency (BTC)"
+    }
    }
   },
   "midnite:uk-casino-welcome-offer": {
