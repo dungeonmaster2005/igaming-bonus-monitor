@@ -9,7 +9,8 @@ changed.
 compliance teams checking that offer pages say the same thing everywhere.
 
 **Live sheet (view only):**
-[Google Sheets](https://docs.google.com/spreadsheets/d/13MRRAc34eYb6_PAdNCtdZzql4zBKXxglZ6gmqX6Yjbk)
+[Google Sheets](https://docs.google.com/spreadsheets/d/13MRRAc34eYb6_PAdNCtdZzql4zBKXxglZ6gmqX6Yjbk) —
+monitoring has been running since 15 Nov 2026, so the `changes` log has only just started to fill.
 
 **An example of what it finds:** on 15 Nov 2026 one offer page listed three different expiry
 periods for the same free spins. Operator names and the verbatim quotes are on the `issues` sheet.
@@ -151,14 +152,20 @@ data/                   state committed by the daily run
 
 ## Screenshots
 
-<!-- TODO: offers_uk sheet (real data, after a week of runs) -->
-*offers_uk — to be added*
+**`offers_uk`** — ranked within each product; every figure links to its source page, empty cells
+say why they are empty.
 
-<!-- TODO: issues sheet -->
-*issues — to be added*
+![offers_uk sheet](docs/screenshots/offers_uk.png)
 
-<!-- TODO: Telegram alert -->
-*Telegram alert — to be added*
+**`issues`** — contradictions, two-way wording and typos on the operators' own pages, with quotes.
+
+![issues sheet](docs/screenshots/issues.png)
+
+**Telegram alert** — from the first live run: one operator changed the currency of its minimum
+deposit on the offer page.
+
+<img src="docs/screenshots/telegram_alert.png" width="320" alt="Telegram alert">
+
 
 ## Limitations
 
