@@ -1,0 +1,30 @@
+name: fetch-pages
+# Manual: save operator pages as a GitHub runner sees them (fixtures, licence checks).
+on:
+  workflow_dispatch:
+    inputs:
+      operators:
+        description: "Operator ids from config/operators.yaml, space-separated"
+        required: true
+permissions:
+  contents: read
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Fetch pages
+        env:
+          OPERATORS: ${{ inputs.operators }}   # via env, never interpolated into the script
+        run: python -m tools.fetch_pages pages $OPERATORS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pages
+          path: pages/
+          retention-days: 7

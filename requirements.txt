@@ -1,0 +1,9 @@
+requests>=2.32
+beautifulsoup4>=4.12
+lxml>=5.2
+PyYAML>=6.0
+python-dotenv>=1.0
+gspread>=6.1
+tzdata>=2024.1   # zoneinfo database (needed on Windows)
+pytest>=8.2
+

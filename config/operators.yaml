@@ -1,0 +1,148 @@
+# Operators monitored. Every page was reached from a GitHub-hosted runner in phase 0
+# (no block, no geo notice, robots.txt allows). `pages` are fetched in order; the parser
+# gets all of them. `enabled: false` entries are kept with the reason.
+defaults:
+  delay_range: [2, 5]
+
+operators:
+  # ---- UK (UKGC) -------------------------------------------------------------
+  - id: unibet_uk
+    operator: Unibet
+    market: UK
+    license: "UKGC 45322 (Platinum Gaming Limited)"
+    parser: unibet_uk
+    enabled: true
+    pages:
+      offer: "https://www.unibet.co.uk/promotions/casino-promotions/free-spins-welcome-offer?lobby=casino&promo=free-spins-welcome-offer"
+
+  - id: virgin_games
+    operator: Virgin Games
+    market: UK
+    license: "UKGC 38905 (Gamesys Operations Limited)"
+    parser: gamesys
+    enabled: false   # phase 2
+    pages:
+      offer: "https://www.virgingames.com/uk/casino-welcome-bonus"
+      terms: "https://www.virgingames.com/uk/terms"
+
+  - id: jackpotjoy
+    operator: Jackpotjoy
+    market: UK
+    license: "UKGC 38905 (Gamesys Operations Limited)"
+    parser: gamesys
+    enabled: false   # phase 2
+    pages:
+      offer: "https://www.jackpotjoy.com/"
+      terms: "https://www.jackpotjoy.com/uk/terms"
+
+  - id: monopoly_casino
+    operator: Monopoly Casino
+    market: UK
+    license: "UKGC 38905 (Gamesys Operations Limited)"
+    parser: gamesys
+    enabled: false   # phase 2
+    pages:
+      offer: "https://www.monopolycasino.com/casino-welcome-bonus"
+      terms: "https://www.monopolycasino.com/terms"
+
+  - id: rainbow_riches
+    operator: Rainbow Riches Casino
+    market: UK
+    license: "UKGC 38905 (Gamesys Operations Limited)"
+    parser: gamesys
+    enabled: false   # phase 2
+    pages:
+      offer: "https://www.rainbowrichescasino.com/"
+      terms: "https://www.rainbowrichescasino.com/uk/terms"
+
+  - id: mrq
+    operator: MrQ
+    market: UK
+    license: "UKGC 60629 (Tek Fox Ltd)"
+    parser: mrq
+    enabled: false   # phase 2
+    pages:
+      offer: "https://mrq.com/promotions/first-deposit-spins"
+
+  - id: netbet_uk
+    operator: NetBet
+    market: UK
+    license: "UKGC 39170 (Netbet Enterprises Limited)"
+    parser: netbet
+    enabled: false   # phase 2
+    pages:
+      offer: "https://casino.netbet.co.uk/welcome-bonus-100"
+
+  - id: spin_genie
+    operator: Spin Genie
+    market: UK
+    license: "UKGC"
+    parser: spin_genie
+    enabled: false   # phase 2
+    pages:
+      offer: "https://www.spingenie.com/promotions/slots-welcome-bonus/"
+      terms: "https://www.spingenie.com/bonus-policy/"
+
+  - id: midnite
+    operator: Midnite
+    market: UK
+    license: "UKGC"
+    parser: midnite
+    enabled: false   # phase 1 check: terms in embedded JSON
+    pages:
+      offer: "https://www.midnite.com/casino/"
+
+  - id: lottoland_uk
+    operator: Lottoland
+    market: UK
+    license: "UKGC 38991"
+    parser: lottoland
+    enabled: false
+    disabled_reason: "reserve: unclear which offer is the casino welcome offer"
+    pages:
+      offer: "https://beta.lottoland.co.uk/casino/offers"
+
+  # ---- Crypto (Curaçao) — only after the licence matches the CGA register ------
+  - id: bitstarz
+    operator: BitStarz
+    market: crypto
+    license: "Curaçao (to verify)"
+    parser: bitstarz
+    enabled: false
+    pages:
+      offer: "https://www.bitstarz.com/"
+      terms: "https://www.bitstarz.com/bonus-terms-and-conditions"
+      legal: "https://www.bitstarz.com/terms-and-conditions"
+
+  - id: sevenbit
+    operator: 7Bit Casino
+    market: crypto
+    license: "Curaçao (to verify)"
+    parser: sevenbit
+    enabled: false
+    pages:
+      offer: "https://7bitcasino.com/bonuses"
+      terms: "https://7bitcasino.com/bonus-terms"
+      legal: "https://7bitcasino.com/terms-and-conditions"
+
+  - id: mbit
+    operator: mBit Casino
+    market: crypto
+    license: "Curaçao (to verify)"
+    parser: mbit
+    enabled: false
+    pages:
+      offer: "https://www.mbitcasino.io/promotions/crypto-welcome-bonus"
+      terms: "https://www.mbitcasino.io/terms/bonus-terms"
+
+  - id: cloudbet
+    operator: Cloudbet
+    market: crypto
+    license: "Curaçao"
+    parser: cloudbet
+    enabled: false
+    disabled_reason: >-
+      CGA register 2026-11-12: Halcyon Super Holdings B.V. (148526), licence
+      OGL/2024/328/0599 expired 2026-05-23, status "Assessment in progress" — not confirmed
+    pages:
+      offer: "https://www.cloudbet.com/en/promotions/general/welcome-package"
