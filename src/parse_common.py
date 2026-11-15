@@ -282,13 +282,15 @@ _QUAL_WAGER = [
     re.compile(r"\b(?:wager|stake|play|bet|spend)\s*(?P<v>£\d+(?:\.\d+)?)\+?\s*or more\b", re.IGNORECASE),
     re.compile(r"\bmake a wager of (?P<v>£\d+(?:\.\d+)?)", re.IGNORECASE),
     re.compile(r"(?P<v>£\d+(?:\.\d+)?)\s*wager on slots?", re.IGNORECASE),
-    re.compile(r"^(?:play|bet) (?P<v>£\d+(?:\.\d+)?)\s*(?:,|&)\s*get\b", re.IGNORECASE),
+    re.compile(r"\b(?:play|bet) (?P<v>£\d+(?:\.\d+)?)\s*(?:,|&)\s*get\b", re.IGNORECASE),
 ]
 _MAX_WIN = re.compile(r"(?:capped at|max(?:imum)?\.? win(?:nings)?(?: amount)?(?: of| is)?)\s*(?P<v>£\s?\d[\d,.]*)"
                       r"|(?P<w>£\s?\d[\d,.]*)\s*max(?:imum)?\.? win", re.IGNORECASE)
 _NO_MAX_WIN = re.compile(r"no caps? on (?:what you win|winnings)|uncapped|no maximum win|no cap on winnings",
                          re.IGNORECASE)
-_PROMO_CODE = re.compile(r"(?:promo |bonus )?code[:\s]+['‘’\"“]?(?P<code>[A-Z0-9]{3,})\b")
+# "use code BETGETCASINO", "the code SNG50", or any case when quoted: "enter the code ‘spin1year’"
+_PROMO_CODE = re.compile(r"(?:promo |bonus )?code[:\s]+(?:['‘’\"“](?P<quoted>[A-Za-z0-9]{3,})['‘’\"”]"
+                         r"|(?P<code>[A-Z0-9]{3,})\b)")
 _NO_CODE = re.compile(r"no (?:promo |bonus )?code (?:is )?(?:needed|required)|promo code\?\s*no\b|no code required",
                       re.IGNORECASE)
 _SPIN_GAME = re.compile(r"(?i:free spins)(?: \(.*?\))?(?: of value \S+)?\s*:?\s*(?:on|at|for|in)\s+(?:the\s+)?"
@@ -346,7 +348,7 @@ def read_offer_sentence(c: Candidates, s: str, url: str) -> None:
         game = re.sub(r"\s+(?:will|when|with|and|valued|worth|slot|game|only|for)\b.*$", "", m.group("g"))
         game = game.strip(" .,:!*")
         if game and game.lower() not in ("the", "slots", "slot", "any", "casino") \
-                and not re.match(r"(?i)(?:new|sign|real|you|your|every|all|registration)\b", game):
+                and not re.match(r"(?i)(?:new|sign|real|you|your|every|all|registration|us)\b", game):
             c.add("eligible_games", _game_name(game), url, s)
     for pattern in _GAME_LABEL:
         if m := pattern.search(s):
@@ -371,7 +373,7 @@ def read_offer_sentence(c: Candidates, s: str, url: str) -> None:
     elif _NO_MAX_WIN.search(s):
         c.none("max_win", url, s)
     if m := _PROMO_CODE.search(s):
-        c.add("promo_code", m.group("code"), url, s)
+        c.add("promo_code", m.group("quoted") or m.group("code"), url, s)
     elif _NO_CODE.search(s):
         c.none("promo_code", url, s)
     if (end := parse_end_date(s)) is not None:

@@ -90,6 +90,9 @@ def test_spin_genie_three_way_choice():
     assert (b.bonus_percent, b.max_bonus, b.free_spins, b.promo_code) == (D(100), D(25), 50, "SNG50")
     assert b.qualifying_amount == D(25) and b.total_reward_value == D("30.0")
     assert b.wagering_multiplier is None and "Bonus Policy" in b.field_notes["wagering_multiplier"]
+    c = offers[2]
+    assert (c.free_spins, c.min_deposit, c.promo_code, c.eligible_games) == (520, D(25), "spin1year", "Thor")
+    assert c.wagering_multiplier == D(10) and c.wagering_applies_to is None  # base not stated
 
 
 def test_midnite():

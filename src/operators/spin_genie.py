@@ -68,9 +68,17 @@ def parse(pages: dict[str, str], op: dict, today: date) -> ParseResult:
     if "year" in pages:
         c = Candidates()
         items = [s for s in _main(pages["year"])
-                 if not re.search(r"other (?:two )?welcome offers|Other Casino Welcome|Match Up to|SNG50|120 Free Spins|\| Spin Genie", s)]
+                 if not re.search(r"(?i)other (?:two )?welcome offers|Other Casino Welcome|Match Up to|SNG50"
+                                  r"|120 Free Spins|\| Spin Genie|— Spin Genie", s)]
         for s in items:
             read_offer_sentence(c, s, urls["year"])
+            if m := re.search(r"one of our slot games — ([A-Z][\w' ]+)!", s):
+                c.add("eligible_games", m.group(1), urls["year"], s)
+        # "10 spins awarded each week … a total of 520 free spins": the row holds the total.
+        weekly = [(v, q) for v, q in c.values.get("free_spins", []) if "total of" not in q.text]
+        c.values["free_spins"] = [(v, q) for v, q in c.values.get("free_spins", []) if "total of" in q.text]
+        if weekly:
+            c.note("spin_value", "not stated; spins are awarded 10 per week for 52 weeks")
         y = new_offer(op, today, OFFER_ID, urls["year"], reward_type="free_spins",
                       offer_label="Choice C: free spins for a year", terms_text=" ".join(items))
         issues += finish(y, c, PARSED_FIELDS)

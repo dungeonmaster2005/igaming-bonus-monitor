@@ -99,3 +99,31 @@ trigger Telegram alerts. Runs on GitHub Actions. Infrastructure is adapted from
   OGL/2023/147/0081; site prints reg. no. 16498, register 164980), mBit (site "Scores55
   Tech B.V.", register "N.V.", same reg. no. 162990 and licence OGL/2024/1307/0748).
   Cloudbet not confirmed (licence expired, "Assessment in progress") → not used.
+
+### Phase 2 — all operators (2026-11-15)
+- A field may come from any official page of the same operator; each filled field keeps
+  `source_url` + verbatim quote (`Offer.evidence`). If sources disagree or one is
+  ambiguous: the unambiguous value is used and the discrepancy goes to `issues`; if the
+  unambiguous sources disagree, the field stays empty (conflict).
+- `issues`: operator, offer_id, field, type (conflict / ambiguous / typo), quotes with
+  source_url, date, neutral `detail`. Facts and quotes only.
+- `stated_none`: the terms explicitly say a limit/code does not exist ("no cap on
+  winnings", "No code is needed") — different from "not stated". `field_notes`: why a
+  field is empty when it is not an issue (conditional max bet, min deposit in EUR while
+  the bonus is in BTC, two spin-activation windows).
+- Rows: alternatives (Monopoly free spins / free bets, Spin Genie A/B/C) and crypto
+  deposit steps ("Deposit N of M") share an `offer_id`.
+- Match bonuses: `qualifying_amount` = deposit that unlocks the maximum bonus
+  (max_bonus × 100 / bonus_percent), so `reward_per_unit` compares like with like.
+- Wagering "0" = the terms say no wagering. Free-spin winnings wagering on crypto
+  packages is not stored in the bonus row (the row's multiplier is the bonus wagering).
+- Crypto reserves vs CGA register: KatsuBet (Kika Technology B.V., 164980,
+  OGL/2023/147/0081 — exact match) → added. Wild.io (Anjouan ALSI-202504044) and Winz.io
+  (Anjouan ALSI-202508056) are not CGA licensees; Bets.io shows no licence text in the
+  HTML → not used.
+- Table cells are not phrase boundaries (a row reads as one phrase); a "Question?" cell
+  is joined with a short "No./Yes." answer cell.
+- Fixtures are shrunk (scripts/styles/SVG removed, `tools/shrink_fixture.py`); parsers
+  read visible text only.
+- Gotcha: writing regexes through a bash heredoc turned `\b` into a backspace character
+  three times — edit regex code with the Edit tool.
