@@ -1,5 +1,225 @@
 [
  {
+  "date": "2026-11-16",
+  "operator_id": "monopoly_casino",
+  "operator": "Monopoly Casino",
+  "row": "monopoly_casino:welcome#Choice B",
+  "offer": "Choice B: free bets",
+  "field": "terms_text",
+  "was": "aba2d67bdeb0",
+  "now": "e202b98f9899",
+  "source_url": "https://www.monopolycasino.com/casino-welcome-bonus",
+  "currency": "GBP",
+  "fragments": [
+   {
+    "removed": "e)",
+    "added": "d)",
+    "before": "be de-selected from the bet slip;",
+    "after": "will expire within 30 days of",
+    "covered": false
+   },
+   {
+    "removed": "f)",
+    "added": "e)",
+    "before": "will be removed from your account;",
+    "after": "each Free Bet token can only",
+    "covered": false
+   },
+   {
+    "removed": "g)",
+    "added": "f)",
+    "before": "token can only be used once;",
+    "after": "are non-refundable and cannot be withdrawn",
+    "covered": false
+   },
+   {
+    "removed": "h)",
+    "added": "g)",
+    "before": "and cannot be withdrawn as cash;",
+    "after": "must be redeemed at their full",
+    "covered": false
+   },
+   {
+    "removed": "website ,",
+    "added": "website,",
+    "before": "on any sportsbook market on the",
+    "after": "Free Bet token 2: £10 bet",
+    "covered": false
+   },
+   {
+    "removed": "i)",
+    "added": "h)",
+    "before": "(2.0) and min. 3 legs; and",
+    "after": "only one Free Bet token can",
+    "covered": false
+   }
+  ],
+  "market": "UK"
+ },
+ {
+  "date": "2026-11-16",
+  "operator_id": "sevenbit",
+  "operator": "7Bit Casino",
+  "row": "sevenbit:welcome-package#Deposit 1 of 4",
+  "offer": "Deposit 1 of 4",
+  "field": "min_deposit",
+  "was": "0.00026",
+  "now": "0.0003",
+  "source_url": "https://7bitcasino.com/bonus-terms",
+  "currency": "BTC",
+  "fragments": [],
+  "market": "crypto"
+ },
+ {
+  "date": "2026-11-16",
+  "operator_id": "sevenbit",
+  "operator": "7Bit Casino",
+  "row": "sevenbit:welcome-package#Deposit 1 of 4",
+  "offer": "Deposit 1 of 4",
+  "field": "max_bet",
+  "was": "0.000013",
+  "now": "0.000015",
+  "source_url": "https://7bitcasino.com/bonus-terms",
+  "currency": "BTC",
+  "fragments": [],
+  "market": "crypto"
+ },
+ {
+  "date": "2026-11-16",
+  "operator_id": "sevenbit",
+  "operator": "7Bit Casino",
+  "row": "sevenbit:welcome-package#Deposit 1 of 4",
+  "offer": "Deposit 1 of 4",
+  "field": "terms_text",
+  "was": "315970403aff",
+  "now": "e047c020c046",
+  "source_url": "https://7bitcasino.com/bonus-terms",
+  "currency": "BTC",
+  "fragments": [
+   {
+    "removed": "0.26",
+    "added": "0.3",
+    "before": "any part of welcome bonus is",
+    "after": "mBTC. a) First deposit bonus: 100%",
+    "covered": false
+   },
+   {
+    "removed": "13",
+    "added": "15",
+    "before": "any bonus from Welcome Package is",
+    "after": "μBTC. All bonuses (unless otherwise specified)",
+    "covered": false
+   }
+  ],
+  "market": "crypto"
+ },
+ {
+  "date": "2026-11-16",
+  "operator_id": "sevenbit",
+  "operator": "7Bit Casino",
+  "row": "sevenbit:welcome-package#Deposit 2 of 4",
+  "offer": "Deposit 2 of 4",
+  "field": "min_deposit",
+  "was": "0.00026",
+  "now": "0.0003",
+  "source_url": "https://7bitcasino.com/bonus-terms",
+  "currency": "BTC",
+  "fragments": [],
+  "market": "crypto"
+ },
+ {
+  "date": "2026-11-16",
+  "operator_id": "sevenbit",
+  "operator": "7Bit Casino",
+  "row": "sevenbit:welcome-package#Deposit 2 of 4",
+  "offer": "Deposit 2 of 4",
+  "field": "max_bet",
+  "was": "0.000013",
+  "now": "0.000015",
+  "source_url": "https://7bitcasino.com/bonus-terms",
+  "currency": "BTC",
+  "fragments": [],
+  "market": "crypto"
+ },
+ {
+  "date": "2026-11-16",
+  "operator_id": "sevenbit",
+  "operator": "7Bit Casino",
+  "row": "sevenbit:welcome-package#Deposit 3 of 4",
+  "offer": "Deposit 3 of 4",
+  "field": "min_deposit",
+  "was": "0.00026",
+  "now": "0.0003",
+  "source_url": "https://7bitcasino.com/bonus-terms",
+  "currency": "BTC",
+  "fragments": [],
+  "market": "crypto"
+ },
+ {
+  "date": "2026-11-16",
+  "operator_id": "sevenbit",
+  "operator": "7Bit Casino",
+  "row": "sevenbit:welcome-package#Deposit 3 of 4",
+  "offer": "Deposit 3 of 4",
+  "field": "max_bet",
+  "was": "0.000013",
+  "now": "0.000015",
+  "source_url": "https://7bitcasino.com/bonus-terms",
+  "currency": "BTC",
+  "fragments": [],
+  "market": "crypto"
+ },
+ {
+  "date": "2026-11-16",
+  "operator_id": "sevenbit",
+  "operator": "7Bit Casino",
+  "row": "sevenbit:welcome-package#Deposit 4 of 4",
+  "offer": "Deposit 4 of 4",
+  "field": "min_deposit",
+  "was": "0.00026",
+  "now": "0.0003",
+  "source_url": "https://7bitcasino.com/bonus-terms",
+  "currency": "BTC",
+  "fragments": [],
+  "market": "crypto"
+ },
+ {
+  "date": "2026-11-16",
+  "operator_id": "sevenbit",
+  "operator": "7Bit Casino",
+  "row": "sevenbit:welcome-package#Deposit 4 of 4",
+  "offer": "Deposit 4 of 4",
+  "field": "max_bet",
+  "was": "0.000013",
+  "now": "0.000015",
+  "source_url": "https://7bitcasino.com/bonus-terms",
+  "currency": "BTC",
+  "fragments": [],
+  "market": "crypto"
+ },
+ {
+  "date": "2026-11-16",
+  "operator_id": "mbit",
+  "operator": "mBit Casino",
+  "row": "mbit:welcome-package#Deposit 1 of 3",
+  "offer": "Deposit 1 of 3",
+  "field": "terms_text",
+  "was": "404f3ea2b9a2",
+  "now": "cff63fffbf81",
+  "source_url": "https://www.mbitcasino.io/promotions/crypto-welcome-bonus",
+  "currency": "BTC",
+  "fragments": [
+   {
+    "removed": "Play On Telegram",
+    "added": "November Showdown Tournament",
+    "before": "More TaDa Christmas Tournament Read More",
+    "after": "Read More See All Promotions Crypto",
+    "covered": false
+   }
+  ],
+  "market": "crypto"
+ },
+ {
   "date": "2026-11-15",
   "operator_id": "mbit",
   "operator": "mBit Casino",
