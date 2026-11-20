@@ -1,5 +1,49 @@
 [
  {
+  "date": "2026-11-20",
+  "operator_id": "bitstarz",
+  "operator": "BitStarz",
+  "row": "bitstarz:welcome-package#Deposit 1 of 4",
+  "offer": "Deposit 1 of 4",
+  "field": "terms_text",
+  "was": "aacc7a8d09ad",
+  "now": "a40c51a324b3",
+  "source_url": "https://www.bitstarz.com/promotions",
+  "currency": "BTC",
+  "fragments": [
+   {
+    "removed": "0.00032",
+    "added": "0.00034",
+    "before": "LTC, # DOGE, # ETH, or",
+    "after": "BTC (or currency equivalent) into your",
+    "covered": false
+   }
+  ],
+  "market": "crypto"
+ },
+ {
+  "date": "2026-11-20",
+  "operator_id": "mbit",
+  "operator": "mBit Casino",
+  "row": "mbit:welcome-package#Deposit 1 of 3",
+  "offer": "Deposit 1 of 3",
+  "field": "terms_text",
+  "was": "cff63fffbf81",
+  "now": "404f3ea2b9a2",
+  "source_url": "https://www.mbitcasino.io/promotions/crypto-welcome-bonus",
+  "currency": "BTC",
+  "fragments": [
+   {
+    "removed": "November Showdown Tournament",
+    "added": "Play On Telegram",
+    "before": "More TaDa Christmas Tournament Read More",
+    "after": "Read More See All Promotions Crypto",
+    "covered": false
+   }
+  ],
+  "market": "crypto"
+ },
+ {
   "date": "2026-11-18",
   "operator_id": "bitstarz",
   "operator": "BitStarz",
