@@ -1,5 +1,175 @@
 [
  {
+  "date": "2026-11-24",
+  "operator_id": "sevenbit",
+  "operator": "7Bit Casino",
+  "row": "sevenbit:welcome-package#Deposit 1 of 4",
+  "offer": "Deposit 1 of 4",
+  "field": "min_deposit",
+  "was": "0.0003",
+  "now": "0.00032",
+  "source_url": "https://7bitcasino.com/bonus-terms",
+  "currency": "BTC",
+  "fragments": [],
+  "market": "crypto"
+ },
+ {
+  "date": "2026-11-24",
+  "operator_id": "sevenbit",
+  "operator": "7Bit Casino",
+  "row": "sevenbit:welcome-package#Deposit 1 of 4",
+  "offer": "Deposit 1 of 4",
+  "field": "max_bet",
+  "was": "0.000015",
+  "now": "0.000016",
+  "source_url": "https://7bitcasino.com/bonus-terms",
+  "currency": "BTC",
+  "fragments": [],
+  "market": "crypto"
+ },
+ {
+  "date": "2026-11-24",
+  "operator_id": "sevenbit",
+  "operator": "7Bit Casino",
+  "row": "sevenbit:welcome-package#Deposit 1 of 4",
+  "offer": "Deposit 1 of 4",
+  "field": "terms_text",
+  "was": "e047c020c046",
+  "now": "fb36fda73688",
+  "source_url": "https://7bitcasino.com/bonus-terms",
+  "currency": "BTC",
+  "fragments": [
+   {
+    "removed": "0.3",
+    "added": "0.32",
+    "before": "any part of welcome bonus is",
+    "after": "mBTC. a) First deposit bonus: 100%",
+    "covered": false
+   },
+   {
+    "removed": "15",
+    "added": "16",
+    "before": "any bonus from Welcome Package is",
+    "after": "μBTC. All bonuses (unless otherwise specified)",
+    "covered": false
+   }
+  ],
+  "market": "crypto"
+ },
+ {
+  "date": "2026-11-24",
+  "operator_id": "sevenbit",
+  "operator": "7Bit Casino",
+  "row": "sevenbit:welcome-package#Deposit 2 of 4",
+  "offer": "Deposit 2 of 4",
+  "field": "min_deposit",
+  "was": "0.0003",
+  "now": "0.00032",
+  "source_url": "https://7bitcasino.com/bonus-terms",
+  "currency": "BTC",
+  "fragments": [],
+  "market": "crypto"
+ },
+ {
+  "date": "2026-11-24",
+  "operator_id": "sevenbit",
+  "operator": "7Bit Casino",
+  "row": "sevenbit:welcome-package#Deposit 2 of 4",
+  "offer": "Deposit 2 of 4",
+  "field": "max_bet",
+  "was": "0.000015",
+  "now": "0.000016",
+  "source_url": "https://7bitcasino.com/bonus-terms",
+  "currency": "BTC",
+  "fragments": [],
+  "market": "crypto"
+ },
+ {
+  "date": "2026-11-24",
+  "operator_id": "sevenbit",
+  "operator": "7Bit Casino",
+  "row": "sevenbit:welcome-package#Deposit 3 of 4",
+  "offer": "Deposit 3 of 4",
+  "field": "min_deposit",
+  "was": "0.0003",
+  "now": "0.00032",
+  "source_url": "https://7bitcasino.com/bonus-terms",
+  "currency": "BTC",
+  "fragments": [],
+  "market": "crypto"
+ },
+ {
+  "date": "2026-11-24",
+  "operator_id": "sevenbit",
+  "operator": "7Bit Casino",
+  "row": "sevenbit:welcome-package#Deposit 3 of 4",
+  "offer": "Deposit 3 of 4",
+  "field": "max_bet",
+  "was": "0.000015",
+  "now": "0.000016",
+  "source_url": "https://7bitcasino.com/bonus-terms",
+  "currency": "BTC",
+  "fragments": [],
+  "market": "crypto"
+ },
+ {
+  "date": "2026-11-24",
+  "operator_id": "sevenbit",
+  "operator": "7Bit Casino",
+  "row": "sevenbit:welcome-package#Deposit 4 of 4",
+  "offer": "Deposit 4 of 4",
+  "field": "min_deposit",
+  "was": "0.0003",
+  "now": "0.00032",
+  "source_url": "https://7bitcasino.com/bonus-terms",
+  "currency": "BTC",
+  "fragments": [],
+  "market": "crypto"
+ },
+ {
+  "date": "2026-11-24",
+  "operator_id": "sevenbit",
+  "operator": "7Bit Casino",
+  "row": "sevenbit:welcome-package#Deposit 4 of 4",
+  "offer": "Deposit 4 of 4",
+  "field": "max_bet",
+  "was": "0.000015",
+  "now": "0.000016",
+  "source_url": "https://7bitcasino.com/bonus-terms",
+  "currency": "BTC",
+  "fragments": [],
+  "market": "crypto"
+ },
+ {
+  "date": "2026-11-24",
+  "operator_id": "mbit",
+  "operator": "mBit Casino",
+  "row": "mbit:welcome-package#Deposit 1 of 3",
+  "offer": "Deposit 1 of 3",
+  "field": "terms_text",
+  "was": "404f3ea2b9a2",
+  "now": "f9b60da31888",
+  "source_url": "https://www.mbitcasino.io/promotions/crypto-welcome-bonus",
+  "currency": "BTC",
+  "fragments": [
+   {
+    "removed": "",
+    "added": "Thanksgiving Bitty Coins Raffle Read More",
+    "before": "More 3rd Deposit Offer Read More",
+    "after": "TON Has Landed at mBitcasino! Read",
+    "covered": false
+   },
+   {
+    "removed": "Read More Play On Telegram",
+    "added": "",
+    "before": "mBitcasino! Read More TaDa Christmas Tournament",
+    "after": "Read More See All Promotions Crypto",
+    "covered": false
+   }
+  ],
+  "market": "crypto"
+ },
+ {
   "date": "2026-11-21",
   "operator_id": "bitstarz",
   "operator": "BitStarz",
