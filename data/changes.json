@@ -1,5 +1,70 @@
 [
  {
+  "date": "2026-11-25",
+  "operator_id": "netbet_uk",
+  "operator": "NetBet",
+  "row": "netbet_uk:welcome-bonus-100",
+  "offer": "Welcome offer",
+  "field": "offer_end_date",
+  "was": "2026-11-30",
+  "now": "2026-12-31",
+  "source_url": "https://casino.netbet.co.uk/welcome-bonus-100",
+  "currency": "GBP",
+  "fragments": [],
+  "market": "UK"
+ },
+ {
+  "date": "2026-11-25",
+  "operator_id": "netbet_uk",
+  "operator": "NetBet",
+  "row": "netbet_uk:welcome-bonus-100",
+  "offer": "Welcome offer",
+  "field": "terms_text",
+  "was": "53560e6427b7",
+  "now": "f2859f24c691",
+  "source_url": "https://casino.netbet.co.uk/welcome-bonus-100",
+  "currency": "GBP",
+  "fragments": [
+   {
+    "removed": "Monday 30 November",
+    "added": "Thursday 31 December",
+    "before": "October 2026 until 11.59am GMT on",
+    "after": "2026. How does it work? Opt-in",
+    "covered": false
+   },
+   {
+    "removed": "30/11/2026",
+    "added": "31/12/2026",
+    "before": "Offer. Offer valid from 15/10/2026 until",
+    "after": "and limited to 1 bonus per",
+    "covered": false
+   }
+  ],
+  "market": "UK"
+ },
+ {
+  "date": "2026-11-25",
+  "operator_id": "bitstarz",
+  "operator": "BitStarz",
+  "row": "bitstarz:welcome-package#Deposit 1 of 4",
+  "offer": "Deposit 1 of 4",
+  "field": "terms_text",
+  "was": "ca3fa076b3db",
+  "now": "a40c51a324b3",
+  "source_url": "https://www.bitstarz.com/promotions",
+  "currency": "BTC",
+  "fragments": [
+   {
+    "removed": "0.00033",
+    "added": "0.00034",
+    "before": "LTC, # DOGE, # ETH, or",
+    "after": "BTC (or currency equivalent) into your",
+    "covered": false
+   }
+  ],
+  "market": "crypto"
+ },
+ {
   "date": "2026-11-24",
   "operator_id": "sevenbit",
   "operator": "7Bit Casino",
