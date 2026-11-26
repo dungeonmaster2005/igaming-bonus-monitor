@@ -1,5 +1,70 @@
 [
  {
+  "date": "2026-11-26",
+  "operator_id": "bitstarz",
+  "operator": "BitStarz",
+  "row": "bitstarz:welcome-package#Deposit 1 of 4",
+  "offer": "Deposit 1 of 4",
+  "field": "terms_text",
+  "was": "a40c51a324b3",
+  "now": "ca3fa076b3db",
+  "source_url": "https://www.bitstarz.com/promotions",
+  "currency": "BTC",
+  "fragments": [
+   {
+    "removed": "0.00034",
+    "added": "0.00033",
+    "before": "LTC, # DOGE, # ETH, or",
+    "after": "BTC (or currency equivalent) into your",
+    "covered": false
+   }
+  ],
+  "market": "crypto"
+ },
+ {
+  "date": "2026-11-26",
+  "operator_id": "mbit",
+  "operator": "mBit Casino",
+  "row": "mbit:welcome-package#Deposit 1 of 3",
+  "offer": "Deposit 1 of 3",
+  "field": "terms_text",
+  "was": "f9b60da31888",
+  "now": "7eff5b7d2425",
+  "source_url": "https://www.mbitcasino.io/promotions/crypto-welcome-bonus",
+  "currency": "BTC",
+  "fragments": [
+   {
+    "removed": "USDT",
+    "added": "EUR",
+    "before": "Spins Up to 1 BTC 30",
+    "after": "(or crypto equivalent) 2nd Deposit 100%",
+    "covered": false
+   },
+   {
+    "removed": "USDT",
+    "added": "EUR",
+    "before": "Spins Up to 1.5 BTC 30",
+    "after": "(or crypto equivalent) 3rd Deposit 125%",
+    "covered": false
+   },
+   {
+    "removed": "USDT",
+    "added": "EUR",
+    "before": "Spins Up to 1.5 BTC 30",
+    "after": "(or crypto equivalent) How to Claim",
+    "covered": false
+   },
+   {
+    "removed": "USDT",
+    "added": "EUR",
+    "before": "make your first deposit of 30",
+    "after": "or crypto equivalent, and your bonus",
+    "covered": false
+   }
+  ],
+  "market": "crypto"
+ },
+ {
   "date": "2026-11-25",
   "operator_id": "netbet_uk",
   "operator": "NetBet",
